@@ -10,11 +10,17 @@ using UnityEngine;
 public class Player : MonoBehaviour
 
 {
+    [SerializeField] private Transform groundCheckTransform = null;
+    [SerializeField] private LayerMask playerMask;
+
     private bool jumpKeyWasPressed;
     private float horizontalInput;
+    private Rigidbody rigidbodyComponent;
+  
 
     void Start()
     {
+        rigidbodyComponent = GetComponent<Rigidbody>();
 
     }
 
@@ -36,14 +42,31 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
         //physics stuff here :]
     {
+        /*the below code uses a spherical area to check for transforms.
+        We can use the ground check transform (the empty game object) for the position and 0.1 for the radius
+        since unity engine collider isn't compatible with bool, we use Length to check the number of items in the array - we don't need more info*/
+
+        rigidbodyComponent.linearVelocity = new Vector3(horizontalInput * 2, rigidbodyComponent.linearVelocity.y, 0);
+
+        if (Physics.OverlapSphere(groundCheckTransform.position, 0.1f, playerMask).Length == 0)
+        {
+            return;
+        }
+
         if (jumpKeyWasPressed)
         {
-            GetComponent<Rigidbody>().AddForce(Vector3.up * 5, ForceMode.VelocityChange);
+            //f for float needs to be added when using decimals!
+            rigidbodyComponent.AddForce(Vector3.up * 6.5f, ForceMode.VelocityChange);
             jumpKeyWasPressed = false;
         }
 
-        GetComponent<Rigidbody>().linearVelocity = new Vector3(horizontalInput, GetComponent<Rigidbody>().linearVelocity.y, 0);
+        
+
+       
+
     }
+
+
 
 
 }
