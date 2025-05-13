@@ -12,12 +12,20 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private Transform groundCheckTransform = null;
     [SerializeField] private LayerMask playerMask;
+    [SerializeField] private LayerMask dirtTileMask;
+    [SerializeField] private LayerMask mushroomMask;
+    [SerializeField] private LayerMask Everything;
+
 
     public Coin coinScript;
+    public Mushroom mushroomScript;
+    public GameObject mushroomObject;
 
     private bool jumpKeyWasPressed;
     private float horizontalInput;
     private Rigidbody rigidbodyComponent;
+
+    
 
 
 
@@ -51,10 +59,12 @@ public class Player : MonoBehaviour
 
         rigidbodyComponent.linearVelocity = new Vector3(horizontalInput * 2, rigidbodyComponent.linearVelocity.y, 0);
 
-        if (Physics.OverlapSphere(groundCheckTransform.position, 0.1f, playerMask).Length == 0)
+        if (Physics.OverlapSphere(groundCheckTransform.position, 0.1f, dirtTileMask | mushroomMask ).Length == 0)
         {
-            return;
+            jumpKeyWasPressed = false;
         }
+        
+
 
         if (jumpKeyWasPressed)
         {
@@ -63,8 +73,14 @@ public class Player : MonoBehaviour
             jumpKeyWasPressed = false;
         }
 
-    }
+        if(mushroomScript.powerupsCollected > 0)
+        {
+            rigidbodyComponent.AddForce(Vector3.up * 10, ForceMode.VelocityChange);
+            jumpKeyWasPressed = false;
+           mushroomScript.powerupsCollected--;
+        }
 
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -73,6 +89,22 @@ public class Player : MonoBehaviour
             Destroy(other.gameObject);
             coinScript.coinsCollected++;
         }
+
+        if (other.gameObject.CompareTag("Mushroom"))
+        {
+            mushroomObject.SetActive(false);
+            mushroomScript.powerupsCollected++;
+
+            Invoke("spawnMushroom", 1.5f);
+            
+
+        }
+
+    }
+    void spawnMushroom()
+    {
+        mushroomObject.SetActive(true);
     }
 
-}      
+
+}

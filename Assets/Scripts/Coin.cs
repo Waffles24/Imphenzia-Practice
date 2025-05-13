@@ -4,7 +4,6 @@ public class Coin : MonoBehaviour
 {
 
     public int coinsCollected;
-    GameObject parent;
 
     private void Start()
     {
