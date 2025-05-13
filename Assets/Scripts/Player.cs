@@ -13,10 +13,13 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform groundCheckTransform = null;
     [SerializeField] private LayerMask playerMask;
 
+    public Coin coinScript;
+
     private bool jumpKeyWasPressed;
     private float horizontalInput;
     private Rigidbody rigidbodyComponent;
-  
+
+
 
     void Start()
     {
@@ -40,7 +43,7 @@ public class Player : MonoBehaviour
     }
 
     private void FixedUpdate()
-        //physics stuff here :]
+    //physics stuff here :]
     {
         /*the below code uses a spherical area to check for transforms.
         We can use the ground check transform (the empty game object) for the position and 0.1 for the radius
@@ -60,13 +63,16 @@ public class Player : MonoBehaviour
             jumpKeyWasPressed = false;
         }
 
-        
-
-       
-
     }
 
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Coin"))
+        {
+            Destroy(other.gameObject);
+            coinScript.coinsCollected++;
+        }
+    }
 
-
-}
+}      
